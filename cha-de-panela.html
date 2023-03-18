@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chá de Panela - Lista de Presentes</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Chá de Panela - Lista de Presentes</h1>
+    <div id="gift-list">
+      <!-- A lista de presentes será gerada aqui -->
+    </div>
+  </div>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js"></script>
+  <script>
+    // Configurações do Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyDQAUThZC1gJqzjDBRUW865M1GZZr--9sc",
+      authDomain: "casamento-gerson-e-luisa.firebaseapp.com",
+      projectId: "casamento-gerson-e-luisa",
+      storageBucket: "casamento-gerson-e-luisa.appspot.com",
+      messagingSenderId: "540801661405",
+      appId: "1:540801661405:web:dc2aa4d0d40ebc50695e34"
+    };
+
+    // Inicializa o Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+const giftListElement = document.getElementById("gift-list");
+
+function renderGifts(gifts) {
+  giftListElement.innerHTML = '';
+  gifts.forEach(gift => {
+    const giftElement = document.createElement("div");
+    giftElement.className = "gift";
+    giftElement.innerHTML = `
+      <h3>${gift.name}</h3>
+      <img src="${gift.image}" alt="${gift.name}" />
+      <a href="${gift.url}" target="_blank">Comprar</a>
+      <button data-id="${gift.id}" class="btn btn-primary">Marcar como comprado</button>
+    `;
+    giftListElement.appendChild(giftElement);
+  });
+}
+
+db.collection("gifts").get().then((querySnapshot) => {
+  const gifts = [];
+  querySnapshot.forEach((doc) => {
+    const gift = {
+      id: doc.id,
+      ...doc.data()
+    };
+    gifts.push(gift);
+  });
+  renderGifts(gifts);
+});
+function markGiftAsBought(giftId, buyerName, buyerMessage) {
+  db.collection("gifts").doc(giftId).update({
+    bought: true,
+    buyer: {
+      name: buyerName,
+      message: buyerMessage
+    }
+  }).then(() => {
+    console.log("Presente marcado como comprado");
+    // Atualize a lista de presentes após marcar como comprado
+    updateGiftList();
+  }).catch((error) => {
+    console.error("Erro ao marcar presente como comprado: ", error);
+  });
+}
+
+giftListElement.addEventListener("click", (event) => {
+  if (event.target.tagName === "BUTTON") {
+    const giftId = event.target.getAttribute("data-id");
+    const buyerName = prompt("Insira seu nome e sobrenome:");
+    const buyerMessage = prompt("Escreva uma mensagem para os noivos:");
+
+    if (buyerName && buyerMessage) {
+      markGiftAsBought(giftId, buyerName, buyerMessage);
+    }
+  }
+});
+
+function updateGiftList() {
+  db.collection("gifts").get().then((querySnapshot) => {
+    const gifts = [];
+    querySnapshot.forEach((doc) => {
+      const gift = {
+        id: doc.id,
+        ...doc.data()
+      };
+      gifts.push(gift);
+    });
+    renderGifts(gifts);
+  });
+}
+
+
+  </script>
+
+
+</body>
+</html>
