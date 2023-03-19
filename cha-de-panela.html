@@ -13,8 +13,8 @@
       <!-- A lista de presentes será gerada aqui -->
     </div>
   </div>
-  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>  
   <script>
     // Configurações do Firebase
     const firebaseConfig = {
@@ -28,7 +28,9 @@
 
     // Inicializa o Firebase
     firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+const db = firebase.firestore();
+const settings = {timestampsInSnapshots: true};
+db.settings(settings);
 const giftListElement = document.getElementById("gift-list");
 
 function renderGifts(gifts) {
