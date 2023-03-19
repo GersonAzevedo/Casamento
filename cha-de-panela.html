@@ -36,12 +36,21 @@ function renderGifts(gifts) {
   gifts.forEach(gift => {
     const giftElement = document.createElement("div");
     giftElement.className = "gift";
-    giftElement.innerHTML = `
-      <h3>${gift.name}</h3>
-      <img src="${gift.image}" alt="${gift.name}" />
-      <a href="${gift.url}" target="_blank">Comprar</a>
-      <button data-id="${gift.id}" class="btn btn-primary">Marcar como comprado</button>
-    `;
+    if (!gift.bought) {
+      giftElement.innerHTML = `
+        <h3>${gift.name}</h3>
+        <img src="${gift.image}" alt="${gift.name}" />
+        <a href="${gift.url}" target="_blank">Comprar</a>
+        <button data-id="${gift.id}" class="btn btn-primary">Marcar como comprado</button>
+      `;
+    } else {
+      giftElement.innerHTML = `
+        <h3>${gift.name} (Já presenteado)</h3>
+        <img src="${gift.image}" alt="${gift.name}" />
+        <p>Presenteado por: ${gift.buyer ? gift.buyer.name : 'Desconhecido'}</p>
+        <p>Mensagem: ${gift.buyer ? gift.buyer.message : 'Sem mensagem'}</p>
+      `;
+    }
     giftListElement.appendChild(giftElement);
   });
 }
