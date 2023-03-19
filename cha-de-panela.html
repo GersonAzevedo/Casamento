@@ -56,14 +56,17 @@ function renderGifts(gifts) {
 }
 
 db.collection("gifts").get().then((querySnapshot) => {
+  console.log("querySnapshot:", querySnapshot); 
   const gifts = [];
   querySnapshot.forEach((doc) => {
+    console.log("doc:", doc); 
     const gift = {
       id: doc.id,
       ...doc.data()
     };
     gifts.push(gift);
   });
+  console.log("gifts:", gifts); 
   renderGifts(gifts);
 });
 function markGiftAsBought(giftId, buyerName, buyerMessage) {
